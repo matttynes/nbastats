@@ -1,0 +1,67 @@
+---
+title: "shinyhelp"
+author: "Matt Tynes"
+date: "12/7/2020"
+output: html_document
+---
+
+```{r}
+
+library(tidyverse)
+library(rstanarm)
+library(ggridges)
+library(gtsummary)
+library(broom.mixed)
+library(gt)
+```
+
+
+```{r setup, include=FALSE}
+
+stats <- read_excel("stats.xlsx",  skip = 1)
+
+salary<- read_csv("salaries_1985to2018 2.csv", 
+    skip = 1) %>% 
+  filter(season_end == 2018)
+
+players <- read_csv("players.csv")
+
+combined <- merge(salary, players, "X_id") %>% 
+  rename(player = name)
+
+combined2 <- merge(stats2, combined, "player") %>% 
+  filter(season.x == 2018)
+write.csv(combined2, "Offence.csv")
+
+fit_model <- stan_glm(formula = salary~DRAYMOND + career_PTS,  
+         data = combined2,
+         refresh = 0) 
+fit_model
+#intercept co + DRAYMOND co x DRAYMOND + PTS co 
+model_1 <- posterior_predict(fit_model)
+
+new_data <- tibble(stat1 = factor(c("estimated", "difference"),
+                              levels = c("estimated", "difference")))
+
+new_obs <- tibble(stat_1 = c("estimated", "difference"))
+dim1_posterior <- posterior_predict(fit_model, newdata = new_obs) %>% 
+  as_tibble() %>% 
+  mutate_all(as.numeric) %>% 
+  rename(estimated = `1`, difference = `2`)
+
+tbl_regression(fit_model, intercept = TRUE) %>% 
+  as_gt() %>%
+  tab_header(title = "Regression")
+
+-1576212.8 + 89530.5 *0.0629269 + 27.2*855329.4
+x1 <- 0.8010484
+x2 <- 16.7
+
+combined2$estimatedsalary <- -1576212.8 + 89530.5 *combined2$DRAYMOND+ combined2$career_PTS*855329.4
+combined2$differenceinsalary <- combined2$salary - combined2$estimatedsalary
+
+write.csv(combined2, "Offence.csv")
+#intercept co + DRAYMOND co x DRAYMOND + PTS co x PTS + POSITION co x PG
+```
+
+intercept co + DRAYMOND co x DRAYMOND + PTS co x PTS + POSITION co x PG

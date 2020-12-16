@@ -9,7 +9,7 @@
 #
 #fininding the gem players
 #win share position ws, per, +-
-##summary(stats$PLUS_MINUS)remo
+##summary(stats$PLUS_MINUS)
 
 
 library(tidyverse)
@@ -17,7 +17,39 @@ library(shiny)
 library(readxl)
 library(rstanarm)
 
-stats <- read_excel("stats.xlsx",  skip = 1)
+stats2 <- as.data.frame(stats)
+stats2$season <- as.character(stats2$season)
+stats2$possessions <- NULL
+stats2$DRAYMOND<- as.numeric(stats2$DRAYMOND)
+
+best <- stats2[order(-stats2$DRAYMOND),]
+
+data_19 <- best %>% 
+  filter(season == "2019") %>% 
+  slice(1:100)
+
+data_18 <- best %>% 
+  filter(season == "2018") %>% 
+  slice(1:100)
+
+data_17 <- best %>% 
+  filter(season == "2017") %>% 
+  slice(1:100)
+
+data_16 <- best %>% 
+  filter(season == "2016") %>% 
+  slice(1:100)
+
+data_15 <- best %>% 
+  filter(season == "2015") %>% 
+  slice(1:100)
+
+data_14 <- best %>% 
+  filter(season == "2014") %>% 
+  slice(1:100)
+
+
+combined2 <- read_csv("Offence.csv")
 
 
 # Define UI for application that draws a histogram
@@ -35,6 +67,19 @@ ui <- navbarPage(
                              choices =  c("Atlanta Hawks", "Boston Celtics", "Brooklyn Nets", "Charlotte Hornets", "Chicago Bulls", "Cleveland Cavaliers", "Dallas Mavs", "Denver Nuggets", "Detroit Pistons", "Golden State Warriors", "Houston Rockets", "Indiana Pacers", "Los Angeles Clippers", "Los Angeles Lakers", "Memphis Grizzlies", "Miami Heat", "Milwaukee Bucks", "Minnesota Timberwolves", "New Orleans Pelicans", "New York Knicks", "Oklahoma City Thunder", "Orlando Magic", "Philadelphia 76ers", "Phoenix Suns", "Portland Trail Blazers", "Sacramento Kings", "San Antonio Spurs", "Toronto Raptors", "Utah Jazz", "Washington Wizards")
                          )),
                      mainPanel(plotOutput("plot1")))
+             )),
+    tabPanel("Team Statistics",
+             fluidPage(
+               titlePanel("National Basketball Association"), 
+               p("Looking at NBA Teams and Individual Players"), 
+               sidebarLayout(
+                 sidebarPanel(
+                   selectInput(
+                     inputId = "Year",
+                     label = "Select a Season",
+                     choices =  c("2014", "2015", "2016", "2017", "2018", "2019")
+                   )),
+                 mainPanel(plotOutput("plot2")))
              )),
     tabPanel("Discussion",
              titlePanel("Discussion Title"),
@@ -478,7 +523,87 @@ server <- function(input, output) {
         print(was)
         
       }
-    })}
+      
+    })
+    output$plot2 <- renderPlot({
+      if (input$Year == "2019") {
+        season_19 <- data_19 %>%
+          
+          #Here, the filter command takes the user's input from the sliderInput
+          #and then sorts the data accordingly - doing the same process for all
+          #the other variables
+          
+          
+          ggplot(aes(x = player, y = DRAYMOND)) +
+          geom_point() +
+          ylab("Defensive Rating") +
+          xlab("Player Name") +
+          theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
+        print(season_19)
+      }
+      
+      else if (input$Year == "2018") {
+        season_18 <- data_18 %>%
+          
+          
+          
+          ggplot(aes(x = player, y = DRAYMOND)) +
+          geom_point() +
+          ylab("Defensive Rating") +
+          xlab("Player Name") +
+          theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+        print(season_18)
+      }
+      
+      else if (input$Year == "2017") {
+        season_17 <- data_17 %>%
+          
+          
+          ggplot(aes(x = player, y = DRAYMOND)) +
+          geom_point() +
+          ylab("Defensive Rating") +
+          xlab("Player Name") +
+          theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+        print(season_17)
+      }
+      
+      else if (input$Year == "2016") {
+        season_16 <- data_16 %>%
+          
+          ggplot(aes(x = player, y = DRAYMOND)) +
+          geom_point() +
+          ylab("Defensive Rating") +
+          xlab("Player Name") +
+          theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+        print(season_16)
+      }
+      
+      else if (input$Year == "2015") {
+        season_15 <- data_15 %>%
+          
+          ggplot(aes(x = player, y = DRAYMOND)) +
+          geom_point() +
+          ylab("Defensive Rating") +
+          xlab("Player Name") +
+          theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+        print(season_15)
+      }
+      else if (input$Year == "2014") {
+        season_14 <- data_14 %>%
+          
+          ggplot(aes(x = player, y = DRAYMOND)) +
+          geom_point() +
+          ylab("Defensive Rating") +
+          xlab("Player Name") +
+          theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+        print(season_14)
+      }
+      
+      
+      
+      
+    })
+    }
 
 
 

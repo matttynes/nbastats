@@ -1,0 +1,12 @@
+name: nbastats
+title: nbastats
+username:
+account: mtynes
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3402415
+bundleId: 3990851
+url: https://mtynes.shinyapps.io/nbastats/
+when: 1608013702.60025
+asMultiple: FALSE
+asStatic: FALSE
